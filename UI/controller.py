@@ -48,20 +48,34 @@ class Controller:
             if node is None:
                 self._view.create_alert("Attenzione! Selezionare un ordine.")
                 return
-            self._view.txt_result.controls.append(ft.Text(f"Caricamento"))
+            self._view.txt_result.controls.append(ft.Text(f"Nodo di partenza: {node}"))
+            self._view.txt_result.controls.append(ft.Text(f"Cammino più lungo"))
             self._view.update_page()
             longest_path = self._model.get_longest_path(node)
-            self._view.txt_result.controls.append(ft.Text(f"Nodo di partenza: {node}"))
             for element in longest_path:
                 self._view.txt_result.controls.append(ft.Text(f"{element}"))
         finally:
             self._view._ddNode.disabled = True
             self._view._btnCerca.disabled = True
             self._view._btnRicorsione.disabled = False
+            self._view.txt_result.controls.append(ft.Text(f"Fine"))
             self._view.update_page()
 
     def handleRicorsione(self, e):
-        pass
+        try:
+            node = self._view._ddNode.value
+            if node is None:
+                self._view.create_alert("Attenzione! Selezionare un ordine.")
+                return
+            self._view.txt_result.controls.append(ft.Text(f"Nodo di partenza: {node}"))
+            self._view.txt_result.controls.append(ft.Text(f"Cammino più pesante"))
+            self._view.update_page()
+            heaviest_path = self._model.get_heavier_path(node)
+            for element in heaviest_path:
+                self._view.txt_result.controls.append(ft.Text(f"{element}"))
+        finally:
+            self._view.txt_result.controls.append(ft.Text(f"Fine"))
+            self._view.update_page()
 
     def fill_dd_nodes(self, list_of_orders):
         for order in list_of_orders:

@@ -41,23 +41,20 @@ class Model:
 
     def get_longest_path(self, order_id):
         starting_node = self._id_map_ordini[int(order_id)]
+        tree = nx.dfs_tree(self._grafo, starting_node)
         self._percorso_max = []
-        percorso_temp = []
-        percorso_temp.append(starting_node)
-        for vicino in self._grafo.successors(starting_node):
-            percorso_temp.append(vicino)
-            self.ricorsione(percorso_temp)
-            percorso_temp.pop()
+        self.ricorsione(tree, [starting_node])
         return self._percorso_max
 
-    def ricorsione(self, percorso_temp):
+    def ricorsione(self, tree, percorso_temp):
         if len(percorso_temp) > len(self._percorso_max):
             self._percorso_max = deepcopy(percorso_temp)
         ultimo = percorso_temp[-1]
-        for vicino in self._grafo.successors(ultimo):
-            if vicino not in percorso_temp:
+
+        for vicino in tree.successors(ultimo):
+            if vicino not in percorso_temp: #per evitare cicli
                 percorso_temp.append(vicino)
-                self.ricorsione(percorso_temp)
+                self.ricorsione(tree, percorso_temp)
                 percorso_temp.pop()
 
     def get_heavier_path(self, order_id):
@@ -68,14 +65,14 @@ class Model:
         parziale = []
         parziale.append(starting_node)
         for vicino in self._grafo.successors(starting_node):
-            parziale.append(vicino)
-            self.ricorsione_by_peso(parziale)
-            parziale.pop()
+                parziale.append(vicino)
+                self.ricorsione_by_peso(parziale)
+                parziale.pop()
         return self._heavier_path
 
     def ricorsione_by_peso(self, parziale):
-        if (new_peso:=self.peso(parziale)) > self._best_weight:
-            self._best_weight = new_peso
+        if self.peso(parziale) > self._best_weight :
+            self._best_weight = self.peso(parziale)
             self._heavier_path = deepcopy(parziale)
         ultimo = parziale[-1]
         for vicino in self._grafo.successors(ultimo):
@@ -97,5 +94,5 @@ class Model:
         # calcolo il peso della lista parziale per ogni arco
         peso = 0
         for i in range(0, len(parziale)-1):
-            peso += self._grafo[parziale[i]][parziale[i+1]['weight']]
+            peso += self._grafo[parziale[i]][parziale[i+1]]["weight"]
         return peso
