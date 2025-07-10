@@ -19,7 +19,10 @@ class Store:
         return self.store_id == other.store_id
 
     def __lt__(self, other):
-        return self.store_name < other.store_name
+        return self.store_id< other.store_id
 
     def __str__(self):
-        return f"{self.store_name}"
+        return f"{self.store_id}"
+
+    def __repr__(self):
+        return str(self)
